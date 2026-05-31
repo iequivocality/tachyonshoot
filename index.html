@@ -5,6 +5,78 @@
         <link rel="stylesheet" type="text/css" href="style.css">
     </head>
     <body>
+        <div class="container">
+            <div id="waves">
+            </div>
+            <div id="data-analyze">
+
+            </div>
+            <div id="heatmap">
+                <canvas id="heatmap-canvas"></canvas>
+            </div>
+            <div id="gradient">
+                <div></div>
+            </div>
+        </div>
     </body>
     <script src="./js/simpleheat.js"></script>
+    <script src="./js/data.js"></script>
+    <script>
+        function $(id) {
+            return document.getElementById(id);
+        }
+
+        const limit = 20000;
+        let count = refinedData.length;
+
+        const heat = simpleheat('heatmap-canvas').data(refinedData).max(18);
+        heat.radius(25, 15);
+        heat.add([100, 300, 1]);
+        heat.add([200, 400, 1]);
+        let randX, randY = 0;
+
+        function draw() {
+            if (count >= limit) {
+                return;
+            }
+
+            const canvas = $('heatmap-canvas');
+            heat.add([Math.random() * canvas.clientWidth, Math.random() * canvas.clientHeight, 1]);
+            count++;
+            heat.draw();
+            window.requestAnimationFrame(draw);
+        }
+
+        window.requestAnimationFrame(draw);
+
+        draw();
+
+        function generateTable(rowCount, colCount) {
+            const container = $("waves");
+            const table = document.createElement("table");
+
+            for (let r = 0; r < rowCount; r++) {
+                const row = document.createElement("tr");
+                for (let c = 0; c < colCount; c++) {
+                    const cell = document.createElement("td");
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+
+            container.innerHTML = ""; 
+            container.appendChild(table);
+        }
+
+        generateTable(3, 15);
+    </script>
+    <script type="module">
+        import { codeToHtml } from 'https://esm.sh/shiki@3.0.0'
+
+        const foo = document.getElementById('data-analyze')
+        foo.innerHTML = await codeToHtml(codeText, {
+            lang: 'py',
+            theme: 'poimandres'
+        })
+    </script>
 </html>

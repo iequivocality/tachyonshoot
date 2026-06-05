@@ -7,6 +7,13 @@
     <body>
         <div class="container">
             <div id="waves">
+                <div class="grid-lines"></div>
+                <svg class="wave-svg" viewBox="0 0 787 196.75" preserveAspectRatio="none">
+                    <path class="wave-base" d="M 0 100 L 800 100" />
+                    <path class="wave-live" id="wave-1" d="" />
+                    <path class="wave-live" id="wave-2" d="" />
+                    <path class="wave-live" id="wave-3" d="" />
+                </svg>
             </div>
             <div id="data-analyze">
 
@@ -51,24 +58,90 @@
 
         draw();
 
-        function generateTable(rowCount, colCount) {
-            const container = $("waves");
-            const table = document.createElement("table");
+        // function generateTable(rowCount, colCount) {
+        //     const container = $("waves");
+        //     const table = document.createElement("table");
 
-            for (let r = 0; r < rowCount; r++) {
-                const row = document.createElement("tr");
-                for (let c = 0; c < colCount; c++) {
-                    const cell = document.createElement("td");
-                    row.appendChild(cell);
+        //     for (let r = 0; r < rowCount; r++) {
+        //         const row = document.createElement("tr");
+        //         for (let c = 0; c < colCount; c++) {
+        //             const cell = document.createElement("td");
+        //             row.appendChild(cell);
+        //         }
+        //         table.appendChild(row);
+        //     }
+
+        //     container.innerHTML = ""; 
+        //     container.appendChild(table);
+        // }
+
+        // generateTable(3, 15);
+
+        // Estado inicial del Monitor
+        let frequency = 7.5; // Hz iniciales
+        let amplitude = 40; // Altura de cresta de la ola
+        let angle = 0;
+        let isLive = true;
+        const waveLive1 = document.querySelector("#wave-1");
+        const waveLive2 = document.querySelector("#wave-2");
+        const waveLive3 = document.querySelector("#wave-3");
+
+        function drawWave() {
+            let points1 = [];
+            let points2 = [];
+            let points3 = [];
+            const width = 800;
+            const height = 200;
+            const midY = height / 2;
+
+            // Si el modo LIVE se apaga, la ola se aplana uniformemente
+            let currentAmp = isLive ? amplitude : 0;
+
+            for (let x = 0; x <= width; x += 5) {
+                // Math.sin calcula la posición Y en función de X, la frecuencia y el tiempo (angle)
+                let y = midY + Math.sin(x * 0.01 * frequency + angle) * currentAmp;
+
+                if (x === 0) {
+                    points1.push(`M ${x} ${y}`);
+                } else {
+                    points1.push(`L ${x} ${y}`);
                 }
-                table.appendChild(row);
             }
 
-            container.innerHTML = ""; 
-            container.appendChild(table);
+            for (let x = 0; x <= width; x += 5) {
+                // Math.sin calcula la posición Y en función de X, la frecuencia y el tiempo (angle)
+                let y = midY + Math.sin(x * 0.01 * frequency + angle + 20) * currentAmp;
+
+                if (x === 0) {
+                    points2.push(`M ${x} ${y}`);
+                } else {
+                    points2.push(`L ${x} ${y}`);
+                }
+            }
+
+            for (let x = 0; x <= width; x += 5) {
+                // Math.sin calcula la posición Y en función de X, la frecuencia y el tiempo (angle)
+                let y = midY + Math.sin(x * 0.01 * frequency + angle + 40) * currentAmp;
+
+                if (x === 0) {
+                    points3.push(`M ${x} ${y}`);
+                } else {
+                    points3.push(`L ${x} ${y}`);
+                }
+            }
+
+            // Insertamos las coordenadas dinámicas calculadas dentro del path de SVG
+            waveLive1.setAttribute("d", points1.join(" "));
+            waveLive2.setAttribute("d", points2.join(" "));
+            waveLive3.setAttribute("d", points3.join(" "));
+
+            // La velocidad de traslación se acopla dinámicamente al valor de la frecuencia
+            angle += isLive ? frequency * 0.01 + 0.001 : 0;
+
+            requestAnimationFrame(drawWave);
         }
 
-        generateTable(3, 15);
+        drawWave();
     </script>
     <script type="module">
         import { codeToHtml } from 'https://esm.sh/shiki@3.0.0'

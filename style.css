@@ -61,19 +61,53 @@ body {
 }
 
 #waves {
+  --text-muted: #8c8980;
+  --wave-color: #004bff;
   grid-area: 1 / 1 / 5 / 13;
-  background-image: url('./sine-wave.png');
-  background-position: center;
-  padding: 15px;
+  height: 200px;
 
-  table {
-    width: 100%;
-    height: 100%;
-    border: 1px solid #222f3e;
-    border-collapse: collapse;
+  .grid-lines {
+    --grid-color: #636e72;
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 25px 25px;
+    background-position: center;
+    opacity: 0.75;
+    height: 230px;
+    top:: -30px;
   }
 
-  td {
-    border: 1px solid #222f3e;
+  .wave-svg {
+    width: 1600px;
+    height: 200px;
+  }
+
+  .wave-base {
+    fill: none;
+    stroke: var(--text-muted);
+    stroke-width: 1px;
+    stroke-dasharray: 2 4;
+    opacity: 0.3;
+  }
+
+  .wave-live {
+    stroke: var(--wave-color);
+    fill: none;
+    stroke-width: 2.5px;
+    stroke-linecap: round;
+  }
+
+  #wave-1 {
+    --wave-color: #d63031;
+  }
+
+  #wave-2 {
+    --wave-color: #0984e3;
+  }
+
+  #wave-3 {
+    --wave-color: #fdcb6e;
   }
 }

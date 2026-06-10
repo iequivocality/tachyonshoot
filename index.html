@@ -22,6 +22,7 @@
                 <div class="code"></div>
             </div>
             <div id="heatmap">
+                <div class="datapoints-count"></div>
                 <canvas id="heatmap-canvas"></canvas>
             </div>
             <div id="gradient">
@@ -48,7 +49,7 @@
             return document.getElementById(id);
         }
 
-        const limit = 20000;
+        const limit = 4000;
         let count = refinedData.length;
 
         const heat = simpleheat('heatmap-canvas').data(refinedData).max(18);
@@ -57,16 +58,22 @@
         heat.add([200, 400, 1]);
         let randX, randY = 0;
 
+        const datapointsCount = document.querySelector(".datapoints-count");
+        const canvas = $('heatmap-canvas');
         function draw() {
-            if (count >= limit) {
-                heat.clear();
-                return;
+            count++;
+            if (count <= limit) {
+                heat.add([Math.random() * canvas.clientWidth, Math.random() * canvas.clientHeight, 1]);
             }
 
-            const canvas = $('heatmap-canvas');
-            heat.add([Math.random() * canvas.clientWidth, Math.random() * canvas.clientHeight, 1]);
-            heat.add([Math.random() * canvas.clientWidth, Math.random() * canvas.clientHeight, 1]);
-            count++;
+            datapointsCount.innerHTML = `
+            Training datapoints: ${count}<br/>
+            Acceleration: ${((1 + Math.sin(count)) * 70).toFixed(2)}<br/>
+            Manhattan Cafe: ${((1 + Math.sin(count)) * 305 / 82).toFixed(2)}<br/>
+            Jungle Pocket: ${((1 + Math.sin(count)) * 413 / 92).toFixed(2)}<br/>
+            Dantsu Flame: ${((1 + Math.sin(count)) * 419 / 83).toFixed(2)}<br/>
+            Agnes Tachyon: ${((1 + Math.sin(count)) * 507 / 41).toFixed(2)}
+            `;
             heat.draw();
             window.requestAnimationFrame(draw);
         }

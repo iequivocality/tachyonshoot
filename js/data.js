@@ -4,81 +4,43 @@ const refinedData = data.map(d => [d[0] / factor, d[1] / factor, d[2]]);
 
 
 // converted using https://jsstringconverter.bbody.io/
-const codeText = "import re, errno\n" +
-	"from os.path import join, sep\n" +
+const codeText = "# Thompson Sampling\n" +
 	"\n" +
-	"from concurrent.futures import ThreadPoolExecutor, as_completed\n" +
+	"# Importing the dataset\n" +
+	"dataset = read.csv('Ads_CTR_Optimisation.csv')\n" +
 	"\n" +
-	"from output_processor import ScrapperOutputProcessor\n" +
-	"from utilities.text import clean_file_name, clean_file_separators\n" +
+	"# Implementing Thompson Sampling\n" +
+	"N = 10000\n" +
+	"d = 10\n" +
+	"ads_selected = integer(0)\n" +
+	"numbers_of_rewards_1 = integer(d)\n" +
+	"numbers_of_rewards_0 = integer(d)\n" +
+	"total_reward = 0\n" +
+	"for (n in 1:N) {\n" +
+	"  ad = 0\n" +
+	"  max_random = 0\n" +
+	"  for (i in 1:d) {\n" +
+	"    random_beta = rbeta(n = 1,\n" +
+	"                        shape1 = numbers_of_rewards_1[i] + 1,\n" +
+	"                        shape2 = numbers_of_rewards_0[i] + 1)\n" +
+	"    if (random_beta > max_random) {\n" +
+	"      max_random = random_beta\n" +
+	"      ad = i\n" +
+	"    }\n" +
+	"  }\n" +
+	"  ads_selected = append(ads_selected, ad)\n" +
+	"  reward = dataset[n, ad]\n" +
+	"  if (reward == 1) {\n" +
+	"    numbers_of_rewards_1[ad] = numbers_of_rewards_1[ad] + 1\n" +
+	"  } else {\n" +
+	"    numbers_of_rewards_0[ad] = numbers_of_rewards_0[ad] + 1\n" +
+	"  }\n" +
+	"  total_reward = total_reward + reward\n" +
+	"}\n" +
 	"\n" +
-	"from docx import Document\n" +
-	"from docx.shared import Inches, Pt\n" +
-	"\n" +
-	"from logger import BemihoLogger\n" +
-	"from output_processor.docs import HeaderDocumentModifier\n" +
-	"\n" +
-	"from metadata.blog import BlogMetadataHandler\n" +
-	"\n" +
-	"class BlogEntryOutputProcessor(ScrapperOutputProcessor):\n" +
-	"    content = 'blog'\n" +
-	"    \n" +
-	"    def __init__(self, user_input):\n" +
-	"        super().__init__(user_input)\n" +
-	"        self.logger = BemihoLogger(self.__class__).get_logger()\n" +
-	"\n" +
-	"    def get_metadata_handler_class(self, user_input, member_path):\n" +
-	"        return BlogMetadataHandler(user_input, member_path)\n" +
-	"\n" +
-	"    def process_blog_data(self, blog_datas):\n" +
-	"        self.logger.debug(f'Starting saving blog content to {self.member_path}.')\n" +
-	"        directory = self.member_path\n" +
-	"        with ThreadPoolExecutor(max_workers=10) as executor:\n" +
-	"            futures = []\n" +
-	"            for blog_data in blog_datas:\n" +
-	"                self.logger.debug(f'Starting thread execution for building document.')\n" +
-	"                futures.append(executor.submit(self.build_document, directory, blog_data))\n" +
-	"            for future in as_completed(futures):\n" +
-	"                try:\n" +
-	"                    future.result()\n" +
-	"                except Exception:\n" +
-	"                    self.logger.error(\"Exception occurred on thread\", exc_info=True)\n" +
-	"        self.metadata_handler.save_metadata()\n" +
-	"\n" +
-	"    def build_document(self, directory, blog_data):\n" +
-	"        content_data = None\n" +
-	"        header = blog_data.header\n" +
-	"        contents = blog_data.contents\n" +
-	"        date_string = header.date.strftime(\"%Y.%m.%d\")\n" +
-	"        document_path = join(directory, f\"{date_string} ({clean_file_separators(header.title)}).docx\")\n" +
-	"\n" +
-	"        try:\n" +
-	"            content_data = self.metadata_handler.build_content_object_from_data(download_url=document_path, successful=False)\n" +
-	"            self.save_to_document(header, contents, content_data, document_path)\n" +
-	"        except OSError as os_error:\n" +
-	"            if os_error.errno == errno.EILSEQ:\n" +
-	"                document_path = join(directory, f\"{date_string} ({clean_file_name(header.title)}).docx\")\n" +
-	"                content_data = self.metadata_handler.build_content_object_from_data(download_url=document_path, successful=False)\n" +
-	"                self.save_to_document(header, contents, content_data, document_path)\n" +
-	"            else:\n" +
-	"                raise os_error\n" +
-	"        except:\n" +
-	"            content_data = self.metadata_handler.build_content_object_from_data(download_url=document_path, successful=False)\n" +
-	"            self.metadata_handler.add_to_metadata(header, content_data)\n" +
-	"            self.logger.error(f'Download from {header.link} to {document_path} is unsuccessful due to issue.', exc_info=True)\n" +
-	"    \n" +
-	"    def save_to_document(self, header, contents, content_data, document_path):\n" +
-	"        if not self.metadata_handler.check_duplicates(header, content_data):\n" +
-	"            document = Document()\n" +
-	"            paragraph_format = document.styles['Normal'].paragraph_format\n" +
-	"            paragraph_format.line_spacing = 1\n" +
-	"            \n" +
-	"            HeaderDocumentModifier(header.title, level=1).change_document(document)\n" +
-	"            HeaderDocumentModifier(header.date.strftime(\"%Y-%m-%d %H:%M:%S\"), level=4).change_document(document)\n" +
-	"            HeaderDocumentModifier(header.link, level=4).change_document(document)\n" +
-	"            \n" +
-	"            for content in contents:\n" +
-	"                content.download_to_document(document)\n" +
-	"            document.save(document_path)\n" +
-	"            content_data.successful = True\n" +
-	"            self.metadata_handler.add_to_metadata(header, content_data)\n";
+	"# Visualising the results\n" +
+	"hist(ads_selected,\n" +
+	"     col = 'blue',\n" +
+	"     main = 'Histogram of ads selections',\n" +
+	"     xlab = 'Ads',\n" +
+	"     ylab = 'Number of times each ad was selected')\n";

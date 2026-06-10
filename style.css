@@ -7,7 +7,9 @@ body {
   min-width: 100vw;
   min-height: 100vh;
   margin: 0;
-  background-color: #bdc3c7;
+  background-color: #1b1e28;
+  border: 2px solid var(--grid-color);
+  --grid-color: #636e72;
 }
 
 .container {
@@ -58,6 +60,8 @@ body {
   padding-right: 10px;
   background-color: #1b1e28;
   overflow: hidden;
+  border-top: 2px solid var(--grid-color);
+  border-right: 2px solid var(--grid-color);
 }
 
 #waves {
@@ -67,7 +71,6 @@ body {
   height: 200px;
 
   .grid-lines {
-    --grid-color: #636e72;
     position: absolute;
     inset: 0;
     background-image: linear-gradient(var(--grid-color) 1px, transparent 1px),
@@ -97,6 +100,7 @@ body {
     fill: none;
     stroke-width: 2.5px;
     stroke-linecap: round;
+    filter: drop-shadow(0px 0px 5px var(--wave-color));
   }
 
   #wave-1 {

@@ -49,6 +49,8 @@
 
             const canvas = $('heatmap-canvas');
             heat.add([Math.random() * canvas.clientWidth, Math.random() * canvas.clientHeight, 1]);
+            heat.add([Math.random() * canvas.clientWidth, Math.random() * canvas.clientHeight, 1]);
+            heat.add([Math.random() * canvas.clientWidth, Math.random() * canvas.clientHeight, 1]);
             count++;
             heat.draw();
             window.requestAnimationFrame(draw);

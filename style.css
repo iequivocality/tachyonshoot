@@ -9,6 +9,7 @@ body {
   margin: 0;
   background-color: #1b1e28;
   border: 2px solid var(--grid-color);
+  overflow: clip;
   --grid-color: #636e72;
 }
 
@@ -23,7 +24,7 @@ body {
 }
 
 #heatmap {
-  grid-area: 5 / 5 / 13 / 12;
+  grid-area: 5 / 5 / 13 / 10;
   background-color: #34495e;
 
   canvas {
@@ -32,25 +33,51 @@ body {
   }
 }
 
-#gradient {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  grid-area: 5 / 12 / 13 / 13;
+#foot {
+  grid-area: 5 / 10 / 13 / 12;
 
-  div {
-    width: 50px;
+  img {
+    width: 107%;
+    object-fit: cover;
+  }
+}
+
+#gradient {
+  --level-bottom: 0;
+  grid-area: 5 / 12 / 13 / 13;
+  text-align: center;
+
+  .level {
+    width: 80%;
+    height: 4px;
+    background-color: #eeeeee;
+    position: absolute;
+    bottom: var(--level-bottom);
+    left: 50%;
+    transform: translateX(-40px);
+    transition: bottom 200ms ease-in-out;
+  }
+
+  .bar-container {
     height: 100%;
-    background: linear-gradient(
-      180deg,
-      #ff0000 0%,
-      #ffa500 17%,
-      #ffff00 33%,
-      #008000 50%,
-      #0000ff 67%,
-      #4b0082 83%,
-      #ee82ee 100%
-    );
+
+    .bar {
+      position: absolute;
+      width: 75px;
+      height: 100%;
+      background: linear-gradient(
+        180deg,
+        #ff0000 0%,
+        #ffa500 17%,
+        #ffff00 33%,
+        #008000 50%,
+        #0000ff 67%,
+        #4b0082 83%,
+        #ee82ee 100%
+      );
+      left: 50%;
+      transform: translateX(-34px);
+    }
   }
 }
 
@@ -59,7 +86,7 @@ body {
   padding-left: 10px;
   padding-right: 10px;
   background-color: #1b1e28;
-  overflow: hidden;
+  overflow-y: scroll;
   border-top: 2px solid var(--grid-color);
   border-right: 2px solid var(--grid-color);
 }
@@ -68,7 +95,6 @@ body {
   --text-muted: #8c8980;
   --wave-color: #004bff;
   grid-area: 1 / 1 / 5 / 13;
-  height: 200px;
 
   .grid-lines {
     position: absolute;
@@ -78,13 +104,16 @@ body {
     background-size: 25px 25px;
     background-position: center;
     opacity: 0.75;
-    height: 230px;
-    top:: -30px;
+    border-bottom: 2px solid var(--grid-color);
   }
 
   .wave-svg {
     width: 1600px;
     height: 200px;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
   }
 
   .wave-base {
